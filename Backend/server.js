@@ -27,7 +27,7 @@ const server = http.createServer(app);
 // Socket.io setup
 const io = new Server(server, {
   cors: {
-    origin:process.env.CLIENT_URL,
+    origin:"https://work-fusion-gamma.vercel.app",
     methods: ['GET', 'POST'],
     credentials: true,
   },
@@ -44,7 +44,7 @@ app.use((req, res, next) => {
 
 // Middleware
 app.use(cors({
-  origin: process.env.CLIENT_URL,
+  origin: "https://work-fusion-gamma.vercel.app",
   credentials: true,
 }));
 app.use(helmet());
