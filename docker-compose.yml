@@ -1,0 +1,55 @@
+version: '3.8'
+
+services:
+  mongodb:
+    image: mongo:7
+    container_name: workfusion-mongo
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+    networks:
+      - workfusion-net
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongosh --quiet
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  backend:
+    build: ./Backend
+    container_name: workfusion-api
+    restart: unless-stopped
+    ports:
+      - "5000:5000"
+    environment:
+      - PORT=5000
+      - MONGODB_URI=mongodb://mongodb:27017/workfusion
+      - JWT_SECRET=workfusion_jwt_secret_key_2024_enterprise
+      - JWT_EXPIRES_IN=24h
+      - NODE_ENV=production
+      - CLIENT_URL=http://localhost
+    depends_on:
+      mongodb:
+        condition: service_healthy
+    networks:
+      - workfusion-net
+
+  frontend:
+    build: ./Frontend
+    container_name: workfusion-ui
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    networks:
+      - workfusion-net
+
+volumes:
+  mongo-data:
+
+networks:
+  workfusion-net:
+    driver: bridge
