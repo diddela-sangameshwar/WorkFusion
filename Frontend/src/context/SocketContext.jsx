@@ -13,7 +13,7 @@ export const SocketProvider = ({ children }) => {
 
   useEffect(() => {
     if (token && user) {
-      const newSocket = io('http://localhost:5001', {
+      const newSocket = io('https://workfusion-zhqa.onrender.com', {
         auth: { token },
         transports: ['websocket', 'polling'],
       });
